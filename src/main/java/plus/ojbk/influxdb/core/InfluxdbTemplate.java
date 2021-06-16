@@ -1,0 +1,101 @@
+package plus.ojbk.influxdb.core;
+
+import org.influxdb.InfluxDB;
+import org.influxdb.dto.Point;
+import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import plus.ojbk.influxdb.autoconfigure.properties.InfluxdbProperties;
+import plus.ojbk.influxdb.util.InfluxdbUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author wxm
+ * @version 1.0
+ * @since 2021/6/16 16:42
+ */
+public class InfluxdbTemplate {
+
+    @Autowired
+    private InfluxDB influxDB;
+
+    private String database;
+    private InfluxdbProperties properties;
+
+    public InfluxdbTemplate(InfluxdbProperties properties) {
+        this.properties = properties;
+        this.database = properties.getDatabase();
+    }
+
+
+    /***
+     * 默认执行方法
+     * @param query
+     * @return
+     */
+    public QueryResult execute(String query) {
+        return influxDB.query(new Query(query, database));
+    }
+
+    /**
+     * 查询 返回对应实体 List
+     *
+     * @param query
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public <T> List<T> selectList(String query, Class<T> clazz) {
+        return InfluxdbUtils.toPOJO(execute(query), clazz);
+    }
+
+    /**
+     * 获取 count
+     * @param query
+     * @return
+     */
+    public long count(String query) {
+        return InfluxdbUtils.count(execute(query));
+    }
+
+    /**
+     * 批量插入
+     *
+     * @param entity
+     */
+    public void insert(List<?> entity) {
+        List<String> data = new ArrayList<>();
+        for (Object object : entity) {
+            data.add(InfluxdbUtils.save(object).lineProtocol());
+        }
+        influxDB.write(data);
+    }
+
+    /**
+     * 插入
+     *
+     * @param entity
+     */
+    public void insert(Object entity) {
+        influxDB.write(InfluxdbUtils.save(entity));
+    }
+
+    /**
+     * 插入
+     *
+     * @param tags
+     * @param fields
+     * @param measurement
+     */
+    public void insert(Map<String, String> tags, Map<String, Object> fields, String measurement) {
+        Point.Builder builder = Point.measurement(measurement);
+        builder.tag(tags);
+        builder.fields(fields);
+        influxDB.write(database, "", builder.build());
+    }
+
+
+}
