@@ -37,7 +37,7 @@ public class InfluxdbAutoConfiguration {
 
 
     @Bean
-    public InfluxdbTemplate minioTemplate(InfluxdbProperties influxdbProperties) {
+    public InfluxdbTemplate influxdbTemplate(InfluxdbProperties influxdbProperties) {
         return new InfluxdbTemplate(influxdbProperties);
     }
 

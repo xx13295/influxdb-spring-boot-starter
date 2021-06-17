@@ -166,6 +166,27 @@ public class InfluxdbUtils {
         return 1;
     }
 
+    /**
+     * 检测数据库是否已存在
+     * @param queryResult 执行结果
+     * @param databaseName yml默认配置中的数据库名
+     * @return
+     */
+    public static boolean checkDatabase(QueryResult queryResult, String databaseName) {
+        for (QueryResult.Result result : queryResult.getResults()) {
+            if (result.getSeries() != null) {
+                for (QueryResult.Series series : result.getSeries()) {
+                    for (List<Object> databases : series.getValues()) {
+                        if(databaseName.equals(databases.get(0))){
+                            return true;
+                        }
+                    }
+
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * 赋值

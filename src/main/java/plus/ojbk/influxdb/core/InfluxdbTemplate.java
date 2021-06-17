@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import plus.ojbk.influxdb.autoconfigure.properties.InfluxdbProperties;
 import plus.ojbk.influxdb.util.InfluxdbUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +34,18 @@ public class InfluxdbTemplate {
     public InfluxdbTemplate(InfluxdbProperties properties) {
         this.properties = properties;
         this.database = properties.getDatabase();
+
     }
 
+    /**
+     * 初始化数据库
+     */
+    @PostConstruct
+    private void initDefaultDatabase(){
+        if(!InfluxdbUtils.checkDatabase(execute("show databases"), database)){
+            execute("create database " + database);
+        }
+    }
 
     /***
      * 默认执行方法
