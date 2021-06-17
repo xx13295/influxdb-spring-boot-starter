@@ -59,6 +59,7 @@ public class InfluxdbTemplate {
 
     /**
      * 获取 count
+     * 仅支持 Field 字段
      *
      * @param query sql语句
      * @return
