@@ -119,7 +119,7 @@ public class InfluxdbUtils {
     /**
      * 保存
      * Point.Builder.field 虽然已过时 理论上不会被删除吧
-     * <p>
+     *
      * Point.Builder.addField方法不够灵活 如果我是 BigDecimal 就傻了
      *
      * @param object 实体对象
@@ -147,6 +147,25 @@ public class InfluxdbUtils {
         }
         return builder.build();
     }
+
+    /**
+     * 删除数据
+     * influxdb-java 本身删除不会返回清理的条数
+     * 因此这里的 1 仅为默认成功返回
+     * 如果存在错误将抛出具体的错误
+     *
+     * @param queryResult
+     * @return
+     */
+    public static long delete(QueryResult queryResult) {
+        for (QueryResult.Result result : queryResult.getResults()) {
+            if (result.getError() != null) {
+                throw new RuntimeException(result.getError());
+            }
+        }
+        return 1;
+    }
+
 
     /**
      * 赋值

@@ -16,6 +16,12 @@ import java.util.Map;
  * @author wxm
  * @version 1.0
  * @since 2021/6/16 16:42
+ *
+ * 基础语句
+ * select <field_key>[,<field_key>,<tag_key>] from <measurement_name>[,<measurement_name>]
+ * insert into <retention policy> measurement,tagKey=tagValue fieldKey=fieldValue timestamp
+ * delete from <measurement_name> where [<tag_key>='<tag_value>'] | [<time interval>]
+ *
  */
 public class InfluxdbTemplate {
 
@@ -54,6 +60,7 @@ public class InfluxdbTemplate {
 
     /**
      * 获取 count
+     *
      * @param query
      * @return
      */
@@ -97,5 +104,17 @@ public class InfluxdbTemplate {
         influxDB.write(database, "", builder.build());
     }
 
+    /**
+     * 删除
+     * 只允许根据tag和时间来进行删除操作
+     * field字段删除无效
+     * 不推荐使用
+     *
+     * @param query
+     * @return
+     */
+    public long delete(String query) {
+        return InfluxdbUtils.delete(execute(query));
+    }
 
 }

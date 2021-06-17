@@ -3,9 +3,7 @@ package plus.ojbk.influxdb.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
-import plus.ojbk.influxdb.util.CommonUtils;
-
-import java.time.Instant;
+import plus.ojbk.influxdb.core.model.QueryModel;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
@@ -16,31 +14,32 @@ import java.util.TreeMap;
  * @version 1.0
  * @since 2021/6/16 17:13
  */
-public class Query {
+public class Query extends Op {
 
     private static Logger log = LoggerFactory.getLogger(Query.class);
+
     /**
-     * 构造查询条件
+     * 构造条件
      *
-     * @param queryModel
+     * @param model
      * @return
      */
-    public static String build(QueryModel queryModel) {
-        Objects.requireNonNull(queryModel.getMeasurement(), "QueryModel.Measurement");
+    public static String build(QueryModel model) {
+        Objects.requireNonNull(model.getMeasurement(), "QueryModel.Measurement");
         StringBuilder query = new StringBuilder();
-        query.append("select ").append(queryModel.getSelect());
-        query.append(" from ").append(queryModel.getMeasurement());
-        if (!ObjectUtils.isEmpty(queryModel.getWhere())) {
-            query.append(" where ").append(queryModel.getWhere());
+        query.append("select ").append(model.getSelect());
+        query.append(" from ").append(model.getMeasurement());
+        if (!ObjectUtils.isEmpty(model.getWhere())) {
+            query.append(" where ").append(model.getWhere());
         }
-        if (!ObjectUtils.isEmpty(queryModel.getOrder())) {
-            query.append(" order by time ").append(queryModel.getOrder());
+        if (!ObjectUtils.isEmpty(model.getOrder())) {
+            query.append(" order by time ").append(model.getOrder());
         }
-        if (!ObjectUtils.isEmpty(queryModel.getCurrent()) && !ObjectUtils.isEmpty(queryModel.getSize())) {
-            query.append(" ").append(queryModel.getPageQuery());
+        if (!ObjectUtils.isEmpty(model.getCurrent()) && !ObjectUtils.isEmpty(model.getSize())) {
+            query.append(" ").append(model.getPageQuery());
         }
-        if (queryModel.getUseTimeZone()) {
-            query.append(" ").append(queryModel.getTimeZone());
+        if (model.getUseTimeZone()) {
+            query.append(" ").append(model.getTimeZone());
         }
         String queryCmd = query.toString();
         log.info(queryCmd);
@@ -54,38 +53,8 @@ public class Query {
      * @return
      */
     public static String count(String field) {
-        return "count(" + field + ")";
-    }
-
-
-
-    private static StringBuilder time(LocalDateTime start, LocalDateTime end) {
-        Instant startTime = CommonUtils.parseLocalDateTimeToInstant(start);
-        Instant endTime = CommonUtils.parseLocalDateTimeToInstant(end);
         StringBuilder sb = new StringBuilder();
-        sb.append("time >='").append(startTime);
-        sb.append("' AND time <='").append(endTime).append("'");
-        return sb;
-    }
-
-    /**
-     * where 条件默认带时间
-     *
-     * @return
-     */
-    public static String where(QueryModel queryModel) {
-        StringBuilder sb = time(queryModel.getStart(), queryModel.getEnd());
-        if(!ObjectUtils.isEmpty(queryModel.getMap())){
-            for (Map.Entry<String, Object> entry : queryModel.getMap().entrySet()) {
-                sb.append(" AND ").append(entry.getKey()).append("=");
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    sb.append("'").append(value).append("'");
-                } else {
-                    sb.append(entry.getValue());
-                }
-            }
-        }
+        sb.append("count(").append("\"").append(field).append("\"").append(")");
         return sb.toString();
     }
 
@@ -93,10 +62,9 @@ public class Query {
         Map<String, Object> map = new TreeMap<>();
         map.put("device_id", "666");
         map.put("temp", 5.1);
-
         QueryModel model = new QueryModel();
-       // model.setMap(map);
-        model.setStart(LocalDateTime.now().plusHours(-10L));
+        model.setMap(map);
+        // model.setStart(LocalDateTime.now().plusHours(-10L));
         model.setEnd(LocalDateTime.now());
 
         //model.setCurrent(2L);
@@ -108,7 +76,6 @@ public class Query {
         //model.setOrder(Order.ASC);
 
         System.err.println(Query.build(model));
-
 
 
     }
