@@ -9,9 +9,9 @@ import plus.ojbk.influxdb.core.Order;
  * @version 1.0
  * @since 2021/6/16 15:22
  */
-public class QueryModel extends BaseModel{
+public class QueryModel extends BaseModel {
     /**
-     *查询的字段
+     * 查询的字段
      */
     private String select;
     /**
@@ -35,8 +35,12 @@ public class QueryModel extends BaseModel{
      * 默认时区 Asia/Shanghai
      */
     private String timeZone = "tz('Asia/Shanghai')";
+    /**
+     * 分组
+     */
+    private String group;
 
-    public QueryModel(){
+    public QueryModel() {
 
     }
 
@@ -96,4 +100,11 @@ public class QueryModel extends BaseModel{
         this.timeZone = timeZone;
     }
 
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
 }

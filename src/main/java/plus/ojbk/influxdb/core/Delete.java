@@ -21,7 +21,7 @@ public class Delete extends Op {
      * @return
      */
     public static String build(DeleteModel model) {
-        Objects.requireNonNull(model.getMeasurement(), "QueryModel.Measurement");
+        Objects.requireNonNull(model.getMeasurement(), "DeleteModel.Measurement");
         StringBuilder delete = new StringBuilder();
         delete.append("delete from ").append(model.getMeasurement());
         if (!ObjectUtils.isEmpty(model.getWhere())) {
@@ -29,7 +29,9 @@ public class Delete extends Op {
         }else {
             throw new RuntimeException("where 条件缺失");
         }
-        return delete.toString();
+        String sql = delete.toString();
+        log.info(sql);
+        return sql;
     }
 
 
@@ -43,7 +45,7 @@ public class Delete extends Op {
         model.setStart(LocalDateTime.now().plusHours(-10L));
         model.setEnd(LocalDateTime.now());
         model.setMeasurement("ojbk");
-        model.setWhere(Delete.where(model));
+        model.setWhere(Op.where(model));
 
         System.err.println(Delete.build(model));
     }

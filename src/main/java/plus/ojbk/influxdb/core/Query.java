@@ -1,7 +1,5 @@
 package plus.ojbk.influxdb.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 import plus.ojbk.influxdb.core.model.QueryModel;
 import java.time.LocalDateTime;
@@ -15,8 +13,6 @@ import java.util.TreeMap;
  * @since 2021/6/16 17:13
  */
 public class Query extends Op {
-
-    private static Logger log = LoggerFactory.getLogger(Query.class);
 
     /**
      * 构造条件
@@ -32,6 +28,9 @@ public class Query extends Op {
         if (!ObjectUtils.isEmpty(model.getWhere())) {
             query.append(" where ").append(model.getWhere());
         }
+        if (!ObjectUtils.isEmpty(model.getGroup())) {
+            query.append(" group by ").append("\"").append(model.getGroup()).append("\"");
+        }
         if (!ObjectUtils.isEmpty(model.getOrder())) {
             query.append(" order by time ").append(model.getOrder());
         }
@@ -41,9 +40,9 @@ public class Query extends Op {
         if (model.getUseTimeZone()) {
             query.append(" ").append(model.getTimeZone());
         }
-        String queryCmd = query.toString();
-        log.info(queryCmd);
-        return query.toString();
+        String sql = query.toString();
+        log.info(sql);
+        return sql;
     }
 
     /**
@@ -72,7 +71,7 @@ public class Query extends Op {
         // model.setSize(10L);
         model.setMeasurement("ojbk");
         model.setUseTimeZone(true);
-        model.setWhere(Query.where(model));
+        model.setWhere(Op.where(model));
         //model.setOrder(Order.ASC);
 
         System.err.println(Query.build(model));

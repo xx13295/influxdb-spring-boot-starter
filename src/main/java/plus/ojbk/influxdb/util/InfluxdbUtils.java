@@ -119,7 +119,7 @@ public class InfluxdbUtils {
     /**
      * 保存
      * Point.Builder.field 虽然已过时 理论上不会被删除吧
-     *
+     * <p>
      * Point.Builder.addField方法不够灵活 如果我是 BigDecimal 就傻了
      *
      * @param object 实体对象

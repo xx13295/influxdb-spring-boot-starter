@@ -16,12 +16,11 @@ import java.util.Map;
  * @author wxm
  * @version 1.0
  * @since 2021/6/16 16:42
- *
+ * <p>
  * 基础语句
  * select <field_key>[,<field_key>,<tag_key>] from <measurement_name>[,<measurement_name>]
  * insert into <retention policy> measurement,tagKey=tagValue fieldKey=fieldValue timestamp
  * delete from <measurement_name> where [<tag_key>='<tag_value>'] | [<time interval>]
- *
  */
 public class InfluxdbTemplate {
 
@@ -39,7 +38,7 @@ public class InfluxdbTemplate {
 
     /***
      * 默认执行方法
-     * @param query
+     * @param query  sql语句
      * @return
      */
     public QueryResult execute(String query) {
@@ -49,8 +48,8 @@ public class InfluxdbTemplate {
     /**
      * 查询 返回对应实体 List
      *
-     * @param query
-     * @param clazz
+     * @param query sql语句
+     * @param clazz 实体
      * @param <T>
      * @return
      */
@@ -61,7 +60,7 @@ public class InfluxdbTemplate {
     /**
      * 获取 count
      *
-     * @param query
+     * @param query sql语句
      * @return
      */
     public long count(String query) {
@@ -71,7 +70,7 @@ public class InfluxdbTemplate {
     /**
      * 批量插入
      *
-     * @param entity
+     * @param entity 实体
      */
     public void insert(List<?> entity) {
         List<String> data = new ArrayList<>();
@@ -84,7 +83,7 @@ public class InfluxdbTemplate {
     /**
      * 插入
      *
-     * @param entity
+     * @param entity 实体
      */
     public void insert(Object entity) {
         influxDB.write(InfluxdbUtils.save(entity));
@@ -93,9 +92,9 @@ public class InfluxdbTemplate {
     /**
      * 插入
      *
-     * @param tags
-     * @param fields
-     * @param measurement
+     * @param tags 标签索引字段map
+     * @param fields 普通字段map
+     * @param measurement 表
      */
     public void insert(Map<String, String> tags, Map<String, Object> fields, String measurement) {
         Point.Builder builder = Point.measurement(measurement);
@@ -110,7 +109,7 @@ public class InfluxdbTemplate {
      * field字段删除无效
      * 不推荐使用
      *
-     * @param query
+     * @param query sql语句
      * @return
      */
     public long delete(String query) {

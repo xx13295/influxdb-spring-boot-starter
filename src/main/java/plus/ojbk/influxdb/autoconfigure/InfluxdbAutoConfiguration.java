@@ -21,14 +21,14 @@ import plus.ojbk.influxdb.core.InfluxdbTemplate;
 @ConditionalOnProperty(prefix = "influxdb", value = "enable", matchIfMissing = true)
 public class InfluxdbAutoConfiguration {
 
-    public InfluxdbAutoConfiguration(){
+    public InfluxdbAutoConfiguration() {
 
     }
 
 
     @Bean
     @ConditionalOnMissingBean
-    public InfluxDB influxdb(InfluxdbProperties influxdbProperties){
+    public InfluxDB influxdb(InfluxdbProperties influxdbProperties) {
         InfluxDB influxDB = InfluxDBFactory.connect(influxdbProperties.getUrl(), influxdbProperties.getUsername(), influxdbProperties.getPassword());
         influxDB.setDatabase(influxdbProperties.getDatabase());
         influxDB.setLogLevel(InfluxDB.LogLevel.BASIC);
@@ -37,7 +37,7 @@ public class InfluxdbAutoConfiguration {
 
 
     @Bean
-    public InfluxdbTemplate minioTemplate(InfluxdbProperties influxdbProperties){
+    public InfluxdbTemplate minioTemplate(InfluxdbProperties influxdbProperties) {
         return new InfluxdbTemplate(influxdbProperties);
     }
 

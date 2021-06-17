@@ -1,5 +1,7 @@
 package plus.ojbk.influxdb.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 import plus.ojbk.influxdb.core.model.BaseModel;
 import plus.ojbk.influxdb.util.CommonUtils;
@@ -15,7 +17,9 @@ import java.util.Map;
  */
 public class Op {
 
-    protected static StringBuilder time(LocalDateTime start, LocalDateTime end) {
+    protected static Logger log = LoggerFactory.getLogger(Op.class);
+
+    public static StringBuilder time(LocalDateTime start, LocalDateTime end) {
         Instant startTime = CommonUtils.parseLocalDateTimeToInstant(start);
         Instant endTime = CommonUtils.parseLocalDateTimeToInstant(end);
         StringBuilder sb = new StringBuilder();
@@ -24,6 +28,13 @@ public class Op {
         return sb;
     }
 
+    /**
+     * 默认条件 为 =
+     * 其他条件暂时未实现请自行构造
+     *
+     * @param model
+     * @return
+     */
     public static String where(BaseModel model) {
         StringBuilder sb = new StringBuilder();
         if (!ObjectUtils.isEmpty(model.getStart()) && !ObjectUtils.isEmpty(model.getEnd())) {
