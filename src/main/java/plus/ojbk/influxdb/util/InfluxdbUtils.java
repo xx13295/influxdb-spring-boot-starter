@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author wxm
@@ -116,6 +117,9 @@ public class InfluxdbUtils {
         return 0;
     }
 
+
+
+
     /**
      * 保存
      * Point.Builder.field 虽然已过时 理论上不会被删除吧
@@ -138,7 +142,12 @@ public class InfluxdbUtils {
                     builder.tag(column.name(), field.get(object).toString());
                 } else {
                     if (field.get(object) != null) {
-                        builder.field(column.name(), field.get(object));
+                        if("time".equals(column.name())){
+                            builder.time(CommonUtils.parseLocalDateTimeToInstant((LocalDateTime) field.get(object)).getEpochSecond(), TimeUnit.SECONDS);
+                        } else {
+                            builder.field(column.name(), field.get(object));
+                        }
+
                     }
                 }
             } catch (IllegalArgumentException | IllegalAccessException e) {
