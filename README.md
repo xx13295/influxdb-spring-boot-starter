@@ -24,7 +24,7 @@ influxdb:
   url: http://127.0.0.1:8086
   username: admin
   password: admin
-  database: my_data
+  database: test
 
 
 ```
@@ -43,7 +43,7 @@ import java.time.LocalDateTime;
 /**
  * @author wxm
  * @version 1.0
- * @since 2021/6/17 15:26
+ * @since 2021/6/17 18:26
  *
  * 瞎编的设备模型
  *
