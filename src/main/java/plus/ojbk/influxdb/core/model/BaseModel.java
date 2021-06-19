@@ -34,6 +34,10 @@ public class BaseModel {
 
     }
 
+    public BaseModel(String measurement) {
+        this.measurement = measurement;
+    }
+
     public String getMeasurement() {
         return measurement;
     }

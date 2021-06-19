@@ -2,6 +2,7 @@ package plus.ojbk.influxdb.core;
 
 import org.springframework.util.ObjectUtils;
 import plus.ojbk.influxdb.core.model.DeleteModel;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
@@ -16,6 +17,9 @@ public class Delete extends Op {
 
     /**
      * 构造条件
+     * <p>
+     * 注意 where 条件中 map参数仅能是 tag
+     * 这是由 influxdb 本身决定的
      *
      * @param model
      * @return
@@ -26,7 +30,7 @@ public class Delete extends Op {
         delete.append("delete from ").append(model.getMeasurement());
         if (!ObjectUtils.isEmpty(model.getWhere())) {
             delete.append(" where ").append(model.getWhere());
-        }else {
+        } else {
             throw new RuntimeException("where 条件缺失");
         }
         String sql = delete.toString();
@@ -35,18 +39,14 @@ public class Delete extends Op {
     }
 
 
-
     public static void main(String[] args) throws Exception {
         Map<String, Object> map = new TreeMap<>();
-        map.put("device_id", "666");
-        map.put("temp", 5.1);
-        DeleteModel model = new DeleteModel();
+        map.put("device_id", "666");  //map中参数 仅能是tag
+        DeleteModel model = new DeleteModel("ojbk");
         model.setMap(map);
         model.setStart(LocalDateTime.now().plusHours(-10L));
         model.setEnd(LocalDateTime.now());
-        model.setMeasurement("ojbk");
         model.setWhere(Op.where(model));
-
         System.err.println(Delete.build(model));
     }
 

@@ -5,6 +5,7 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import plus.ojbk.influxdb.autoconfigure.properties.InfluxdbProperties;
 import plus.ojbk.influxdb.util.InfluxdbUtils;
 
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author wxm
@@ -41,8 +43,8 @@ public class InfluxdbTemplate {
      * 初始化数据库
      */
     @PostConstruct
-    private void initDefaultDatabase(){
-        if(!InfluxdbUtils.checkDatabase(execute("show databases"), database)){
+    private void initDefaultDatabase() {
+        if (!InfluxdbUtils.checkDatabase(execute("show databases"), database)) {
             execute("create database " + database);
         }
     }
@@ -104,15 +106,30 @@ public class InfluxdbTemplate {
     /**
      * 插入
      *
-     * @param tags 标签索引字段map
-     * @param fields 普通字段map
+     * @param tags        标签索引字段map
+     * @param fields      普通字段map
+     * @param time        时间可选 可设置为null 即自动生成
      * @param measurement 表
      */
-    public void insert(Map<String, String> tags, Map<String, Object> fields, String measurement) {
+    public void insert(Map<String, String> tags, Map<String, Object> fields, Long time, String measurement) {
         Point.Builder builder = Point.measurement(measurement);
         builder.tag(tags);
         builder.fields(fields);
+        if (!ObjectUtils.isEmpty(time)) {
+            builder.time(time, TimeUnit.SECONDS);
+        }
         influxDB.write(database, "", builder.build());
+    }
+
+    /**
+     * 插入
+     * <p>
+     * 请使用 Insert 构造
+     *
+     * @param query
+     */
+    public void insert(String query) {
+        influxDB.write(query);
     }
 
     /**

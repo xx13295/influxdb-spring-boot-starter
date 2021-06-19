@@ -1,5 +1,6 @@
 package plus.ojbk.influxdb.core.model;
 
+
 /**
  * @author wxm
  * @version 1.0
@@ -7,5 +8,12 @@ package plus.ojbk.influxdb.core.model;
  */
 public class DeleteModel extends BaseModel {
 
+    public DeleteModel(){
+
+    }
+
+    public DeleteModel(String measurement){
+        super(measurement);
+    }
 
 }

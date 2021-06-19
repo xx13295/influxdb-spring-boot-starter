@@ -44,6 +44,10 @@ public class QueryModel extends BaseModel {
 
     }
 
+    public QueryModel(String measurement) {
+        super(measurement);
+    }
+
     public String getPageQuery() {
         return "limit " + size + " offset " + (current - 1) * size;
     }
