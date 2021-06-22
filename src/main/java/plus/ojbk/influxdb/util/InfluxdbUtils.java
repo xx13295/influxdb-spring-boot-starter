@@ -6,6 +6,8 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
+import plus.ojbk.influxdb.annotation.Count;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -242,5 +244,33 @@ public class InfluxdbUtils {
         field.set(obj, value);
     }
 
+    /**
+     * 获取表名
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> String getMeasurement(Class<T> clazz) {
+        Measurement measurement = clazz.getAnnotation(Measurement.class);
+        return measurement.name();
+    }
+
+    /**
+     * 获取count注解value 作为count查询
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> String getCountField(Class<T> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            Count count = field.getAnnotation(Count.class);
+            if (!ObjectUtils.isEmpty(count)) {
+                return count.value();
+            }
+        }
+        throw new RuntimeException("请使用@Count注解到相应的字段上");
+    }
 
 }
