@@ -10,7 +10,7 @@
     <dependency>
         <groupId>plus.ojbk</groupId>
         <artifactId>influxdb-spring-boot-starter</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </dependency>
 
 
@@ -36,6 +36,7 @@ influxdb:
 import lombok.Data;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
+import plus.ojbk.influxdb.annotation.Count;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -59,6 +60,7 @@ public class Device {
     /**
      * 数据值
      */
+    @Count("value")  //count查询 注解
     @Column(name="value")
     private BigDecimal value;
     /**
@@ -114,9 +116,11 @@ public class Device {
     public Object data(){
         QueryModel countModel = new QueryModel();
         countModel.setMeasurement(measurement);
+       // countModel.setMeasurement(InfluxdbUtils.getMeasurement(Device.class));
         countModel.setStart(LocalDateTime.now().plusHours(-2L));
         countModel.setEnd(LocalDateTime.now());
-        countModel.setSelect(Query.count("voltage"));
+        countModel.setSelect(Query.count("voltage"));//只能count field字段
+      //  countModel.setSelect(Query.count(InfluxdbUtils.getCountField(Device.class)));  
         countModel.setWhere(Op.where(countModel));
         
         //获得总条数
