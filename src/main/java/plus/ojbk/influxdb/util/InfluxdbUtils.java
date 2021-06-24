@@ -59,6 +59,9 @@ public class InfluxdbUtils {
                                     log.error("Field :{} Not fount, error :{}", fieldName, e.getMessage());
                                 }
                                 if (field != null) {
+                                    if (value.get(i) == null){
+                                        continue;
+                                    }
                                     Class<?> type = field.getType();
                                     setFieldValue(type, value, i, obj, field);
                                 }
