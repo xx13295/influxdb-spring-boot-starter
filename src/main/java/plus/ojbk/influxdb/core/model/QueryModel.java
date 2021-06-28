@@ -1,7 +1,7 @@
 package plus.ojbk.influxdb.core.model;
 
 import org.springframework.util.ObjectUtils;
-import plus.ojbk.influxdb.core.Order;
+import plus.ojbk.influxdb.core.enums.Order;
 
 
 /**

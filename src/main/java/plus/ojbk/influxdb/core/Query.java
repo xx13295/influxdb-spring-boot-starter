@@ -29,7 +29,7 @@ public class Query extends Op {
             query.append(" where ").append(model.getWhere());
         }
         if (!ObjectUtils.isEmpty(model.getGroup())) {
-            query.append(" group by ").append("\"").append(model.getGroup()).append("\"");
+            query.append(" group by ").append(model.getGroup());
         }
         if (!ObjectUtils.isEmpty(model.getOrder())) {
             query.append(" order by time ").append(model.getOrder());
@@ -56,6 +56,21 @@ public class Query extends Op {
         sb.append("count(").append("\"").append(field).append("\"").append(")");
         return sb.toString();
     }
+
+
+    /**
+     * 聚合函数构建
+     * @param tag
+     * @param field
+     * @return
+     */
+    public static StringBuilder funcAggregate(String tag, String field) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(tag).append("(").append("\"").append(field).append("\"").append(")");
+        sb.append(" as ").append("\"").append(field).append("\"");
+        return sb;
+    }
+
 
     public static void main(String[] args) throws Exception {
         Map<String, Object> map = new TreeMap<>();

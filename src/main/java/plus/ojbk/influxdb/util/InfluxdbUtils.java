@@ -7,7 +7,9 @@ import org.influxdb.dto.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
+import plus.ojbk.influxdb.annotation.Aggregate;
 import plus.ojbk.influxdb.annotation.Count;
+import plus.ojbk.influxdb.core.Query;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -276,4 +278,26 @@ public class InfluxdbUtils {
         throw new RuntimeException("请使用@Count注解到相应的字段上");
     }
 
+    /**
+     * 聚合函数查询拼接select条件
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> String getAggregateSelect(Class<T> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        StringBuilder temp = new StringBuilder();
+        int i = 0;
+        for (Field field : fields) {
+            Aggregate aggregate = field.getAnnotation(Aggregate.class);
+            if (!ObjectUtils.isEmpty(aggregate)) {
+                if(i != 0){
+                    temp.append(", ");
+                }
+                temp.append(Query.funcAggregate(aggregate.tag().getTag(), aggregate.value()));
+                i++;
+            }
+        }
+        return temp.toString();
+    }
 }

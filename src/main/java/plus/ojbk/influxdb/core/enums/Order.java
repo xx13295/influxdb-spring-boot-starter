@@ -1,4 +1,4 @@
-package plus.ojbk.influxdb.core;
+package plus.ojbk.influxdb.core.enums;
 
 /**
  * @author wxm
